@@ -3,10 +3,11 @@ import {
   MilkIcon,
   PackageIcon,
   ShoppingBagIcon,
+  UserCogIcon,
   UserIcon,
 } from "lucide-react";
 import React from "react";
-import Logo from "./Logo";
+import Logo from "../Logo";
 import Link from "next/link";
 import {
   Sheet,
@@ -24,27 +25,34 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { buttonVariants } from "./ui/button";
+import { buttonVariants } from "../ui/button";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
+
+import LogoLink from "./LogoLink";
+import ColorContextProvider from "./useColor";
 
 const Navbar = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
   const isAdmin = user?.email === process.env.ADMIN_EMAIL;
   return (
-    <div className="absolute top-0 left-0 w-full ">
+    <div
+      className={
+        isAdmin
+          ? "absolute top-0 left-0 w-full z-20 bg-foreground"
+          : "absolute top-0 left-0 w-full z-20 "
+      }
+    >
       <div className="flex items-center  justify-between  px-6 py-8 lg:px-16  ">
-        <div className="flex items-center ">
-          <Logo className="cursor-pointer" />
-        </div>
+        <LogoLink />
         <div className="flex items-center gap-6 lg:gap-12">
           <AuthPrompt user={user} />
           <Cart />
           <div>
             {isAdmin ? (
               <Link href={"/admin"}>
-                <PackageIcon className="w-6 h-6 text-background" />
+                <UserCogIcon className="w-6 h-6 text-background" />
               </Link>
             ) : null}
           </div>
@@ -89,9 +97,13 @@ async function AuthPrompt({ user }: { user: KindeUser | null }) {
         <DropdownMenuSeparator />
         {user ? (
           <>
-            <DropdownMenuItem className="text-xs">{user.email}</DropdownMenuItem>
+            <DropdownMenuItem className="text-xs font-semibold">
+              {user.email}
+            </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href={"/api/auth/logout"}>logout</Link>
+              <Link href={"/api/auth/logout"} className="font-medium">
+                logout
+              </Link>
             </DropdownMenuItem>
           </>
         ) : (

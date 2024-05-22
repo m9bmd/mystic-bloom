@@ -22,7 +22,6 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="">
-      <FloatingNav />
       <Hero />
       <MadeInIndia />
       <ProductCarousel />
@@ -38,7 +37,6 @@ export default function Home() {
                 <InstagramIcon className="w-5 h-5" />
               </Link>
               <Link href={"/#"}>
-                {" "}
                 <TwitterIcon className="w-5 h-5" />
               </Link>
               <Link href={"/#"}>

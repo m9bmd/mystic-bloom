@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "./Navbar";
+import Navbar from "./Navbar/Navbar";
 import { Playfair_Display as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -41,7 +41,6 @@ const Hero = () => {
           Explore
         </Button>
       </div>
-      <Navbar />
     </div>
   );
 };

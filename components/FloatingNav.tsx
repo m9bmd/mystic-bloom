@@ -13,13 +13,13 @@ import { link } from "fs";
 
 const FloatingNav = () => {
   return (
-    <div className="fixed top-0 left-1/2 transform -translate-x-1/2  z-40 text-center ">
+    <div className="fixed top-0 left-1/2 transform -translate-x-1/2  z-40 text-center">
       <Sheet>
         <SheetTrigger className=" ">
-          <div className=" bg-black/30 backdrop-blur-sm border border-t-0  rounded-b-full  px-1.5 py-2.5 ">
+          <div className=" bg-black/30 backdrop-blur-sm border border-t-0 border-yellow-100  rounded-b-full  px-2.5 py-5">
             <Lightbulb
               strokeWidth={1}
-              className="w-fit  h-9 text-background  rotate-180 fill-yellow-300 "
+              className="w-fit h-9 text-background  rotate-180 fill-yellow-300 "
             />
           </div>
         </SheetTrigger>

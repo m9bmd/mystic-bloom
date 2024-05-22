@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import {Poppins as FontSans } from "next/font/google";
+import { Poppins as FontSans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import Navbar from "@/components/Navbar/Navbar";
+import FloatingNav from "@/components/FloatingNav";
+import { Toaster } from "@/components/ui/toaster"
 
 const fontSans = FontSans({
   subsets: ["latin"],
-  weight:["200","300","400","500","600","700",],
+  weight: ["200", "300", "400", "500", "600", "700"],
   variable: "--font-sans",
 });
 
@@ -27,7 +30,10 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        {children}
+        <Navbar/>
+        <FloatingNav />
+        <main>{children}</main>
+        <Toaster />
       </body>
     </html>
   );
