@@ -1,3 +1,6 @@
+
+
+
 "use client";
 import {
   Table,
@@ -20,7 +23,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { deleteProduct } from "@/lib/products/deleteProduct";
 
-export function ProductsTable({ products }: { products: TableTopFormData[] }) {
+export function ProductsTable({ products }: { products: TableTopFormData[] } ) {
   const { toast } = useToast();
   const deleteToast = async (id:string) => {
     toast({

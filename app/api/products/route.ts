@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { ApiResponse, TableTopFormData } from "@/lib/types";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
         },
       },
     });
-    revalidatePath("/admin/products");
+    revalidateTag("products");
     // console.log("Product created successfully", res);
     return NextResponse.json({
       success: true,
@@ -104,7 +104,7 @@ export async function PUT(request: Request) {
       },
     });
     // console.log("Product updated successfully", res);
-    revalidatePath("/admin/products");
+    revalidateTag("products");
     return NextResponse.json({
       success: true,
       message: "Product updated successfully",
@@ -128,6 +128,7 @@ export async function DELETE(request: NextRequest) {
         message: "Deleted product",
       });
     }
+    revalidateTag("products");
   } catch (error) {
     console.error("error creating product", error);
     return NextResponse.json({

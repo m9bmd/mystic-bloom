@@ -54,6 +54,7 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
     );
     if (filteredImages.length === 0) {
       setImages([]);
+      await deleteImageFromDBCloud(public_id);
     } else {
       setImages(filteredImages as uploadedImagesSchema);
       await deleteImageFromDBCloud(public_id);
