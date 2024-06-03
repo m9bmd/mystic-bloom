@@ -1,9 +1,9 @@
 "use client";
 
-import { TableTopSchema } from "@/lib/types";
+import { TableTopSchema, uploadedImageSchema, uploadedImagesSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { set, z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,43 +17,73 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
+import { fileFetch, multipleFileUpload } from "@/lib/uploadImages/fileUpload";
+import { Textarea } from "@/components/ui/textarea";
+import { navigate } from "@/lib/navigate";
+
 export function AddTableTopForm() {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof TableTopSchema>>({
     resolver: zodResolver(TableTopSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      color: "",
+      weight: "",
+      mrpPrice: "",
+      discountPrice: "",
+      images: [],
+    },
   });
 
   async function onSubmit(values: z.infer<typeof TableTopSchema>) {
-    const formData = new FormData();
-
-    // Add non-file data from React Hook Form values
-    formData.append("color", values.color);
-    formData.append("description", values.description);
-    formData.append("name", values.name);
-    formData.append("weight", values.weight);
-
+    setIsUploading(true);
+    const ImageformData = new FormData();
     for (let i = 0; i < values.images.length; i++) {
-      formData.append(`images[${i}]`, values.images[i]);
+      ImageformData.append("images", values.images[i] as File);
     }
+    toast({
+      title: "Uploading files...",
+      description: "this may take a few seconds",
+    });
+    const imageUrl = await fileFetch(ImageformData);
+    values.images = imageUrl as uploadedImagesSchema;
+    const jsonValues = JSON.stringify(values);
 
-    try {
-      const response = await fetch("http://localhost:3000/api/products", {
-        method: "POST",
-        body: formData,
+    toast({
+      title: "Creating Product...🌸",
+      description: "this may take a few seconds",
+    });
+    const response = await fetch("http://localhost:3000/api/products", {
+      method: "POST",
+      body: jsonValues,
+    });
+    const data = await response.json();
+    if (data.success === true) {
+      toast({
+        title: "Created Product ✅",
+        description: "product created successfully 🎉",
       });
-
-      const data = await response.json();
-
-      console.log("API response:", data);
-    } catch (error) {
-      console.error("Error submitting data:", error);
+      form.reset();
+      setIsUploading(false);
+      navigate("/admin/products");
+    } else if (data.success === false) {
+      toast({
+        variant: "destructive",
+        title: "Uh-oh! something Went wrong",
+        description: "there was a problem with your request",
+      });
+      setIsUploading(false);
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pt-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 pt-4 pb-24"
+      >
         <FormField
           control={form.control}
           name="name"
@@ -77,7 +107,7 @@ export function AddTableTopForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="" {...field} />
+                <Textarea className="resize-none" placeholder="" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -101,7 +131,38 @@ export function AddTableTopForm() {
           name="weight"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Weight</FormLabel>
+              <FormLabel>Weight (gm)</FormLabel>
+              <FormControl>
+                <Input placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="mrpPrice"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Mrp (₹)</FormLabel>
+              <FormControl>
+                <Input placeholder="" {...field} />
+              </FormControl>
+              <FormDescription>
+                The full price will be shown with a strikethrough like this ₹
+                <span className="line-through">476</span> and the discounted
+                price will be displayed next to it
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="discountPrice"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Discount price (₹)</FormLabel>
               <FormControl>
                 <Input placeholder="" {...field} />
               </FormControl>
@@ -114,7 +175,7 @@ export function AddTableTopForm() {
           name="images"
           render={({ field: { value, onChange, ...fieldProps } }) => (
             <FormItem>
-              <FormLabel>Picture</FormLabel>
+              <FormLabel>Pictures</FormLabel>
               <FormControl>
                 <Input
                   {...fieldProps}
@@ -124,6 +185,7 @@ export function AddTableTopForm() {
                   onChange={(event) => {
                     const files = event.target.files;
                     if (files) {
+                      console.log("Inside on Change");
                       onChange(Array.from(files));
                     }
                   }}
@@ -133,7 +195,9 @@ export function AddTableTopForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button disabled={isUploading} type="submit">
+          Submit
+        </Button>
       </form>
     </Form>
   );

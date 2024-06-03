@@ -18,7 +18,7 @@ const NoItems = ({
       <div className="h-full flex flex-col items-center justify-center gap-4 px-8">
         <h2 className="font-semibold text-xl ">Your have no {name}</h2>
         <p className="text-sm text-center">{description}</p>
-        {buttonName && <LinkButton name={name} link="/admin/products/add"/> }
+        {buttonName && <LinkButton name={buttonName} link="/admin/products/add"/> }
       </div>
     </div>
   );

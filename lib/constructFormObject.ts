@@ -1,7 +1,8 @@
 type FormObject = {
   [key: string]: string | File | string[] | File[];
 };
-export const constructFormObject = (formData: FormData) => {
+
+export const constructFormObject = (formData: FormData): FormObject => {
   const formObject: FormObject = {};
 
   formData.forEach((value, key) => {
@@ -9,10 +10,9 @@ export const constructFormObject = (formData: FormData) => {
       if (!formObject.hasOwnProperty(key)) {
         formObject[key] = [];
       }
-      //@ts-ignore
-      formObject[key].push(value);
+      (formObject[key] as File[]).push(value as File);
     } else {
-      formObject[key] = value;
+      formObject[key] = value as string;
     }
   });
 

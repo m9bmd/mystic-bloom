@@ -4,8 +4,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar/Navbar";
 import FloatingNav from "@/components/FloatingNav";
-import { Toaster } from "@/components/ui/toaster"
-
+import { Toaster } from "@/components/ui/toaster";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const fontSans = FontSans({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   description: "Best taple tops on the internet",
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,17 +25,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
-        )}
-      >
-        <Navbar/>
-        <FloatingNav />
-        <main>{children}</main>
-        <Toaster />
-      </body>
+
+        <body
+          className={cn(
+            "min-h-screen bg-background font-sans antialiased",
+            fontSans.variable
+          )}
+        >
+          <Navbar />
+          <FloatingNav />
+          <main>{children}</main>
+          <Toaster />
+        </body>
+
     </html>
   );
 }

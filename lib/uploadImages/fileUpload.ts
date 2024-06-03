@@ -1,6 +1,11 @@
-"use server"
+"use server";
 import fs from "fs/promises";
 import { uploadOnCloudinary } from "./uploadOnCloudinary";
+export interface ImageInfo {
+  name: string;
+  url: string;
+  public_id: string;
+}
 
 export const fileUpload = async (image: File) => {
   try {
@@ -18,25 +23,38 @@ export const fileUpload = async (image: File) => {
 };
 type FileArray = File[];
 
-export const multipleFileUpload = async (images: FileArray) => {
-  const imageUrl = [];
+export async function fileFetch(images: FormData) {
+  const imagesArray = images.getAll("images") as File[];
+  const imageUrl =  await multipleFileUpload(imagesArray)
+  return imageUrl
+}
 
+export const multipleFileUpload = async (images: FileArray) => {
   try {
-    // console.log("in")
-    for (const image of images) {
+    const imageUrlObject = await images.reduce(async (accPromise, image, index) => {
+      const acc = await accPromise;
       const path = `public/temp/${image.name}`;
       await writeFile(path, image);
       const res = await uploadOnCloudinary(path);
-      const img_object = res ;
-      imageUrl.push({name: img_object?.original_filename, url: img_object?.secure_url, public_id:img_object?.public_id });
+      const img_object = res;
+      const name = img_object?.original_filename as string;
+      acc[index] = {
+        name: img_object?.original_filename || '',
+        url: img_object?.secure_url || '',
+        public_id: img_object?.public_id || '',
+      };
       await deleteFile(path);
-    }
-    console.log("upload complete")
-    return imageUrl;
+      return acc;
+    }, Promise.resolve({} as { [key: number]: ImageInfo }));
+    
+    console.log("Upload complete");
+    console.log(imageUrlObject);
+    return imageUrlObject;
   } catch (error) {
-    throw Error
+    throw new Error("File upload failed");
   }
 };
+
 
 const writeFile = async (path: string, image: File) => {
   try {

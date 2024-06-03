@@ -28,37 +28,7 @@ export default function Home() {
       <CustomerReviews />
       <BestProducts />
       <Passion />
-      <div className="bg-foreground text-background p-4">
-        <div className="space-y-12">
-          <div className="flex flex-col gap-6">
-            <Logo className="text-4xl" />
-            <div className="flex gap-4">
-              <Link href={"/#"}>
-                <InstagramIcon className="w-5 h-5" />
-              </Link>
-              <Link href={"/#"}>
-                <TwitterIcon className="w-5 h-5" />
-              </Link>
-              <Link href={"/#"}>
-                <YoutubeIcon className="w-5 h-5" />
-              </Link>
-              <Link href={"/#"}>
-                <FacebookIcon className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <h2 className="description-label text-lg">Useful Links</h2>
-            <div className="text-sm font-extralight  flex flex-col gap-4">
-              <Link href={"/"}>Contact</Link>
-              <Link href={"/"}>Deliveries and returns</Link>
-              <Link href={"/"}>About Bloomy</Link>
-            </div>
-          </div>
-          <div className="text-xs text-neutral-400  ">2024 Bloomy</div>
-        </div>
-      </div>
+      <Footer />
     </main>
   );
 }
@@ -79,4 +49,38 @@ function Passion({}) {
   );
 }
 
+function Footer({}) {
+  return (
+    <div className="bg-foreground text-background p-4">
+      <div className="space-y-12">
+        <div className="flex flex-col gap-6">
+          <Logo className="text-4xl" />
+          <div className="flex gap-4">
+            <Link href={"/#"}>
+              <InstagramIcon className="w-5 h-5" />
+            </Link>
+            <Link href={"/#"}>
+              <TwitterIcon className="w-5 h-5" />
+            </Link>
+            <Link href={"/#"}>
+              <YoutubeIcon className="w-5 h-5" />
+            </Link>
+            <Link href={"/#"}>
+              <FacebookIcon className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
 
+        <div className="space-y-3">
+          <h2 className="description-label text-lg">Useful Links</h2>
+          <div className="text-sm font-extralight  flex flex-col gap-4">
+            <Link href={"/"}>Contact</Link>
+            <Link href={"/"}>Deliveries and returns</Link>
+            <Link href={"/"}>About Bloomy</Link>
+          </div>
+        </div>
+        <div className="text-xs text-neutral-400  ">2024 Bloomy</div>
+      </div>
+    </div>
+  );
+}

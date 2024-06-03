@@ -12,3 +12,24 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model Image {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  url       String
+  public_id String @unique
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId String?  @db.ObjectId
+}
+
+model Product {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  name          String  @unique
+  category      String
+  description   String
+  color         String
+  weight        String
+  mrpPrice      String
+  discountPrice String
+  images        Image[]
+}
