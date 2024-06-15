@@ -12,35 +12,48 @@ export const fetchAllProducts = async () => {
         method: "GET",
       },
       next: { tags: ["products"] },
-      cache: "no-store",
     });
     if (res.ok) {
       const data: ApiResponse = await res.json();
-      // console.log("fetched products successfully: ", data);
-
-      return data.data;
-    } else {
-      console.error("Failed to fetch products, status: ", res.status);
-      return [];
+      if (data.success === false) {
+        return [];
+      } else {
+        return data.data as TableTopFormData[];
+      }
     }
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
   }
 };
+// export const fetchAllProducts = async () => {
+//   try {
+//     const products = await prisma.product.findMany()
+//     console.log(products)
+//     return []
+//   } catch (error) {
+//     console.log('error fetching')
+//     return []
+//   }
+// }
 
 export const fetchProduct = async (id: string) => {
   try {
     const res = await fetch(`http://localhost:3000/api/products?id=${id}`, {
+      headers: {
+        Accept: "application/json",
+        method: "GET",
+      },
       cache: "no-store",
+      next: { tags: ["product"] },
     });
     if (res.ok) {
-      const data = (await res.json()) as ApiResponse;
-      return data.data;
+      const data: ApiResponse = await res.json();
+      return data.data as TableTopFormData;
     }
   } catch (error) {
     console.error(error);
-    return "";
+    return {};
   }
 };
 

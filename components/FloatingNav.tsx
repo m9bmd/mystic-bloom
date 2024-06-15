@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/sheet";
 import { Lightbulb } from "lucide-react";
 import { Button } from "./ui/button";
-import { link } from "fs";
 
 const FloatingNav = () => {
   return (

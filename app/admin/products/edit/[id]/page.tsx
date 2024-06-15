@@ -9,7 +9,6 @@ type Props = {
 const page = async ({ params, searchParams }: Props) => {
   const id = searchParams?.id;
   const product = await fetchProduct(id as string);
-
   return (
     <div className="space-y-4 lg:w-[900px] lg:mx-auto">
       <h2 className="font-medium">Edit Form</h2>

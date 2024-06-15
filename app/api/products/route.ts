@@ -50,6 +50,7 @@ export async function POST(request: Request) {
         weight: Formdata.weight,
         mrpPrice: Formdata.mrpPrice,
         discountPrice: Formdata.discountPrice,
+        quantity:Formdata.quantity,
         category: "table top",
         images: {
           create: Object.values(Formdata.images).map((image) => ({
@@ -61,6 +62,7 @@ export async function POST(request: Request) {
       },
     });
     revalidateTag("products");
+    revalidateTag("product");
     // console.log("Product created successfully", res);
     return NextResponse.json({
       success: true,
@@ -90,6 +92,7 @@ export async function PUT(request: Request) {
         weight: Formdata.weight,
         mrpPrice: Formdata.mrpPrice,
         discountPrice: Formdata.discountPrice,
+        quantity:Formdata.quantity,
         category: "table top",
         images: {
           connectOrCreate: Object.values(Formdata.images).map((image) => ({
@@ -105,6 +108,7 @@ export async function PUT(request: Request) {
     });
     // console.log("Product updated successfully", res);
     revalidateTag("products");
+    revalidateTag("product")
     return NextResponse.json({
       success: true,
       message: "Product updated successfully",

@@ -1,9 +1,13 @@
 "use client";
 
-import { TableTopSchema, uploadedImageSchema, uploadedImagesSchema } from "@/lib/types";
+import {
+  TableTopSchema,
+  uploadedImageSchema,
+  uploadedImagesSchema,
+} from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { set, z } from "zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { fileFetch, multipleFileUpload } from "@/lib/uploadImages/fileUpload";
+import { fileFetch } from "@/lib/uploadImages/fileUpload";
 import { Textarea } from "@/components/ui/textarea";
 import { navigate } from "@/lib/navigate";
 
@@ -33,6 +37,7 @@ export function AddTableTopForm() {
       weight: "",
       mrpPrice: "",
       discountPrice: "",
+      quantity: "",
       images: [],
     },
   });
@@ -82,7 +87,7 @@ export function AddTableTopForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 pt-4 pb-24"
+        className="space-y-8 pb-24 pt-4"
       >
         <FormField
           control={form.control}
@@ -107,7 +112,11 @@ export function AddTableTopForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea className="resize-none" placeholder="" {...field} />
+                <Textarea
+                  className="h-40 resize-none"
+                  placeholder=""
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -163,6 +172,19 @@ export function AddTableTopForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Discount price (₹)</FormLabel>
+              <FormControl>
+                <Input placeholder="" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="quantity"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product availaible quantity</FormLabel>
               <FormControl>
                 <Input placeholder="" {...field} />
               </FormControl>

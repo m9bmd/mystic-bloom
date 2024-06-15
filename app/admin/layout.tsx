@@ -16,7 +16,7 @@ export default async function layout({
   }
   return (
     <div className="relative min-h-screen">
-      <div className="h-full px-6 pt-28 lg:mx-auto lg:w-[1024px]">
+      <div className="h-full px-6 pt-36 lg:mx-auto lg:w-[1024px]">
         {children}
       </div>
       <AdminNav />

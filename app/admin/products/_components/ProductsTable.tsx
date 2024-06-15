@@ -24,6 +24,7 @@ import { ToastAction } from "@/components/ui/toast";
 import { deleteProduct } from "@/lib/products/deleteProduct";
 
 export function ProductsTable({ products }: { products: TableTopFormData[] } ) {
+  // console.log("from productsTable", products)
   const { toast } = useToast();
   const deleteToast = async (id:string) => {
     toast({
@@ -39,7 +40,7 @@ export function ProductsTable({ products }: { products: TableTopFormData[] } ) {
     <NoItems
       name="products"
       description="You can start selling as soon as you add a product"
-      buttonName="products"
+      buttonName="product"
     />
   ) : (
     <div className="">

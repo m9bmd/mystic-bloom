@@ -10,9 +10,9 @@ import { useColor } from './useColor'
 const LogoLink = () => {
 
   return (
-    <div className="flex items-center ">
+    <div className="flex items-center">
     <Link href={"/"}>
-    <Logo className="cursor-pointer" />
+    <Logo className="cursor-pointer " />
     </Link>
   </div>
   )

@@ -19,10 +19,7 @@ export type uploadedImageSchema = TypeOf<typeof uploadedImageSchema>;
 
 const uploadedImagesSchema = z.array(uploadedImageSchema).nonempty();
 export type uploadedImagesSchema = TypeOf<typeof uploadedImagesSchema>;
-const imagesSchema = z.union([
-  fileListSchema,
-  uploadedImagesSchema,
-]);
+const imagesSchema = z.union([fileListSchema, uploadedImagesSchema]);
 
 export const TableTopSchema = z.object({
   id: z.string().optional(),
@@ -51,11 +48,14 @@ export const TableTopSchema = z.object({
       required_error: "mrp is required",
     })
     .min(1, { message: "Please provide mrp price" }),
-  discountPrice: z
+  discountPrice: z.string({
+    required_error: "discount price is required",
+  }),
+  quantity: z
     .string({
-      required_error: "discount price is required",
+      required_error: "quantity  is required",
     })
-    .min(1, { message: "Please provide discount price" }),
+    .min(1, { message: "Please provide quantity" }),
   images: imagesSchema,
 });
 
@@ -74,6 +74,7 @@ export type TableTopFormData = {
   weight: string;
   mrpPrice: string;
   discountPrice: string;
+  quantity: string;
   images: image[];
 };
 
@@ -109,6 +110,11 @@ export const TableTopUpdateSchema = z.object({
       required_error: "discount price is required",
     })
     .min(1, { message: "Please provide discount price" }),
+  quantity: z
+    .string({
+      required_error: "quantity  is required",
+    })
+    .min(1, { message: "Please provide quantity" }),
   images: z.array(uploadedImageSchema),
 });
 export type TableTopUpdateSchema = TypeOf<typeof TableTopUpdateSchema>;

@@ -31,8 +31,9 @@ import { revalidatePath } from "next/cache";
 import { navigate } from "@/lib/navigate";
 
 const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
+  const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<uploadedImagesSchema | []>(
-    product.images as uploadedImagesSchema | []
+    product.images as uploadedImagesSchema | [],
   );
   const form = useForm<z.infer<typeof TableTopSchema>>({
     resolver: zodResolver(TableTopSchema),
@@ -44,20 +45,24 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
       weight: product.weight,
       mrpPrice: product.mrpPrice,
       discountPrice: product.discountPrice,
+      quantity: product.quantity,
       images: images,
     },
   });
   const { toast } = useToast();
   const deleteImage = async (public_id: string) => {
+    setLoading(true);
     const filteredImages = images.filter(
-      (image) => image.public_id !== public_id
+      (image) => image.public_id !== public_id,
     );
     if (filteredImages.length === 0) {
       setImages([]);
       await deleteImageFromDBCloud(public_id);
+      setLoading(false);
     } else {
       setImages(filteredImages as uploadedImagesSchema);
       await deleteImageFromDBCloud(public_id);
+      setLoading(false);
       form.setValue("images", filteredImages as uploadedImagesSchema);
       // console.log(filteredImages);
     }
@@ -75,9 +80,10 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
     });
   };
   async function onSubmit(values: z.infer<typeof TableTopSchema>) {
+    setLoading(true);
     const images = values.images;
     const allFilesAreValid = images.every(
-      (image: unknown) => image instanceof File
+      (image: unknown) => image instanceof File,
     );
     if (allFilesAreValid) {
       const ImageFormData = new FormData();
@@ -91,23 +97,25 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
         method: "PUT",
         body: jsonValues,
       });
-      // console.log("All items in images are valid File objects");
+      console.log("All items in images are valid File objects");
     } else {
+      console.log("no file uploaded but deleted", values);
       const jsonValues = JSON.stringify(values);
       const response = await fetch("http://localhost:3000/api/products", {
         method: "PUT",
         body: jsonValues,
       });
-      // console.log("Some items in images are not valid File objects");
+      console.log("Some items in images are not valid File objects");
     }
-    navigate('/admin/products')
+    setLoading(false);
+    navigate("/admin/products");
   }
   return (
     <div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 pt-4 pb-24"
+          className="space-y-8 pb-24 pt-4"
         >
           <FormField
             control={form.control}
@@ -129,7 +137,11 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea className="resize-none" placeholder="" {...field} />
+                  <Textarea
+                    className="h-36 resize-none"
+                    placeholder=""
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -194,6 +206,19 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
           />
           <FormField
             control={form.control}
+            name="quantity"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Product availaible quantity</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="images"
             render={({ field: { value, onChange, ...fieldProps } }) => (
               <FormItem>
@@ -216,7 +241,7 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
                 {images.length !== 0 && (
                   <FormDescription>
                     Image uploaded:{" "}
-                    <span className="text-primary font-medium">
+                    <span className="font-medium text-primary">
                       {images.length}
                     </span>
                   </FormDescription>
@@ -227,26 +252,26 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
             )}
           />
           {images.length !== 0 && (
-            <ScrollArea className="w-full whitespace-nowrap rounded-md border border-slate-300 px-4 p-4">
-              <div className="flex w-max space-x-4 ">
+            <ScrollArea className="w-full whitespace-nowrap rounded-md border border-slate-300 p-4 px-4">
+              <div className="flex w-max space-x-4">
                 {images.map((image) => (
                   <figure className="shrink-0" key={image.public_id}>
-                    <div className="overflow-hidden rounded-md relative">
+                    <div className="relative overflow-hidden rounded-md">
                       <img
                         src={image.url}
                         alt={image.name}
-                        className=" h-[400px] w-[300px] object-cover"
+                        className="h-[400px] w-[300px] object-cover"
                       />
 
                       <Button
                         type="button"
                         variant={"destructive"}
                         onClick={() => showDeleteToast(image.public_id)}
-                        className="absolute top-5 right-5 bg-destructive/50 p-1 rounded-full"
+                        className="absolute right-5 top-5 rounded-full bg-destructive/50 p-1"
                       >
-                        <X className=" h-8 w-8" />
+                        <X className="h-8 w-8" />
                       </Button>
-                      <figcaption className="absolute left-5 bottom-5 text-primary-foreground">
+                      <figcaption className="absolute bottom-5 left-5 text-primary-foreground">
                         {image.name}
                       </figcaption>
                     </div>
@@ -257,7 +282,9 @@ const UpdateTableTopForm = ({ product }: { product: TableTopSchema }) => {
             </ScrollArea>
           )}
 
-          <Button type="submit">Submit</Button>
+          <Button disabled={loading} type="submit">
+            Submit
+          </Button>
         </form>
       </Form>
     </div>
