@@ -33,48 +33,91 @@ model Product {
   discountPrice String
   quantity      String
   images        Image[]
-  OrderItem     OrderItem[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+  CartItem      CartItem[]
+  OrderItem     OrderItem[]
 }
 
 model Address {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   firstName String
   lastName  String
+  userEmail String
   company   String?
   street    String
-  apartment String
+  apartment String?
   city      String
   state     String
   pincode   Int
-  phone     String
+  phone     Int
   orders    Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Order {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  OrderDate   DateTime    @default(now())
-  userEmail   String      @unique
-  status      String
-  totalAmount Float
-  paymentType String
-  addressId   String      @db.ObjectId
-  address     Address     @relation(fields: [addressId], references: [id])
-  orderItems  OrderItem[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now())
+model Cart {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  userEmail String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  CartItem  CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  cartId    String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String   @db.ObjectId
+  quantity  Int
+  price     String // Price at the time the item was added
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId]) // Ensure a product is only added once per cart
 }
 
 model OrderItem {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  quantity  Int
-  product   Product  @relation(fields: [productId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String   @db.ObjectId
   productId String   @db.ObjectId
-  Order     Order?   @relation(fields: [orderId], references: [id])
-  orderId   String?  @db.ObjectId
+  quantity  Int
+  price     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  orderDate     DateTime      @default(now())
+  userEmail     String
+  status        OrderStatus
+  totalAmount   Float
+  paymentType   paymentType
+  paymentStatus PaymentStatus
+  addressId     String        @db.ObjectId
+  address       Address       @relation(fields: [addressId], references: [id])
+  orderItems    OrderItem[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum paymentType {
+  ONLINE
+  COD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+}
+
+enum OrderStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
 }

@@ -42,20 +42,33 @@ export const TableTopSchema = z.object({
     .string({
       required_error: "Weight is required",
     })
-    .min(1, { message: "Please provide weight value" }),
+    .min(1, { message: "Please provide weight value" })
+    .refine((value) => !isNaN(Number(value)), {
+      message: "Weight must be a valid number",
+    }),
   mrpPrice: z
     .string({
-      required_error: "mrp is required",
+      required_error: "MRP is required",
     })
-    .min(1, { message: "Please provide mrp price" }),
-  discountPrice: z.string({
-    required_error: "discount price is required",
-  }),
+    .min(1, { message: "Please provide MRP price" })
+    .refine((value) => !isNaN(Number(value)), {
+      message: "MRP must be a valid number",
+    }),
+  discountPrice: z
+    .string({
+      required_error: "Discount price is required",
+    })
+    .refine((value) => !isNaN(Number(value)), {
+      message: "Discount price must be a valid number",
+    }),
   quantity: z
     .string({
-      required_error: "quantity  is required",
+      required_error: "Quantity is required",
     })
-    .min(1, { message: "Please provide quantity" }),
+    .min(1, { message: "Please provide quantity" })
+    .refine((value) => !isNaN(Number(value)), {
+      message: "Quantity must be a valid number",
+    }),
   images: imagesSchema,
 });
 
@@ -78,6 +91,46 @@ export type TableTopFormData = {
   images: image[];
 };
 
+// export const TableTopUpdateSchema = z.object({
+//   id: z.string(),
+//   name: z
+//     .string({
+//       required_error: "Name is required",
+//     })
+//     .min(1, { message: "Please provide name" }),
+//   description: z
+//     .string({
+//       required_error: "Description is required",
+//     })
+//     .min(1),
+//   color: z
+//     .string({
+//       required_error: "Color is required",
+//     })
+//     .min(1, { message: "Please provide color" }),
+//   weight: z
+//     .string({
+//       required_error: "Weight is required",
+//     })
+//     .min(1, { message: "Please provide weight value" }),
+//   mrpPrice: z
+//     .string({
+//       required_error: "mrp is required",
+//     })
+//     .min(1, { message: "Please provide mrp price" }),
+//   discountPrice: z
+//     .string({
+//       required_error: "discount price is required",
+//     })
+//     .min(1, { message: "Please provide discount price" }),
+//   quantity: z
+//     .string({
+//       required_error: "quantity  is required",
+//     })
+//     .min(1, { message: "Please provide quantity" }),
+//   images: z.array(uploadedImageSchema),
+// });
+
 export const TableTopUpdateSchema = z.object({
   id: z.string(),
   name: z
@@ -99,22 +152,34 @@ export const TableTopUpdateSchema = z.object({
     .string({
       required_error: "Weight is required",
     })
-    .min(1, { message: "Please provide weight value" }),
+    .min(1, { message: "Please provide weight value" })
+    .refine((value) => !isNaN(Number(value)), {
+      message: "Weight must be a valid number",
+    }),
   mrpPrice: z
     .string({
-      required_error: "mrp is required",
+      required_error: "MRP is required",
     })
-    .min(1, { message: "Please provide mrp price" }),
+    .min(1, { message: "Please provide MRP price" })
+    .refine((value) => !isNaN(Number(value)), {
+      message: "MRP must be a valid number",
+    }),
   discountPrice: z
     .string({
-      required_error: "discount price is required",
+      required_error: "Discount price is required",
     })
-    .min(1, { message: "Please provide discount price" }),
+    .min(1, { message: "Please provide discount price" })
+    .refine((value) => !isNaN(Number(value)), {
+      message: "Discount price must be a valid number",
+    }),
   quantity: z
     .string({
-      required_error: "quantity  is required",
+      required_error: "Quantity is required",
     })
-    .min(1, { message: "Please provide quantity" }),
+    .min(1, { message: "Please provide quantity" })
+    .refine((value) => !isNaN(Number(value)), {
+      message: "Quantity must be a valid number",
+    }),
   images: z.array(uploadedImageSchema),
 });
 export type TableTopUpdateSchema = TypeOf<typeof TableTopUpdateSchema>;

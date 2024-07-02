@@ -6,7 +6,8 @@ import FloatingNav from "@/components/FloatingNav";
 import { Toaster } from "@/components/ui/toaster";
 import ServerNavbar from "@/components/Navbar/ServerNavbar";
 import { Footer } from "@/components/Footer";
-import CartContextProvider from "@/components/cart/CartContextProvider";
+import { CartContextProvider } from "@/components/cart/CartContextProvider";
+
 const fontSans = FontSans({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],

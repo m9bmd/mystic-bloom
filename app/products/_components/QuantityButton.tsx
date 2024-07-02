@@ -1,18 +1,20 @@
 "use client";
-import { useCartContext } from "@/components/cart/CartContextProvider";
+
 import { Button } from "@/components/ui/button";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 
 type QuantityButtonProps = {
-  quantity: number;
+  productCount: number;
   incrementQuantity: () => void;
   decrementQuantity: () => void;
 };
 
-
-const QuantityButton = ({quantity,incrementQuantity,decrementQuantity}: QuantityButtonProps) => {
-
+const QuantityButton = ({
+  productCount,
+  incrementQuantity,
+  decrementQuantity,
+}: QuantityButtonProps) => {
   return (
     <div className="flex items-center gap-6">
       <p className="font-medium">Quantity: </p>
@@ -20,7 +22,7 @@ const QuantityButton = ({quantity,incrementQuantity,decrementQuantity}: Quantity
         <Button onClick={decrementQuantity} variant={"outline"} size={"icon"}>
           <MinusIcon />
         </Button>
-        <div className="text-lg font-medium">{quantity}</div>
+        <div className="text-lg font-medium">{productCount}</div>
         <Button onClick={incrementQuantity} variant={"outline"} size={"icon"}>
           <PlusIcon />
         </Button>

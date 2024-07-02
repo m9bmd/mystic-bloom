@@ -1,15 +1,16 @@
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
-import React from 'react'
-import Address from './_components/Address'
+import React from "react";
+import CheckoutForm from "./_components/CheckoutForm";
+import TotalCartAmount from "@/components/cart/TotalCartAmout";
 
 const page = async () => {
-  const {getUser, getIdToken} = getKindeServerSession()
   return (
-    <div className=''>
-      
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold">Delivery</h2>
+      <div>
+        <CheckoutForm />
+      </div>
     </div>
+  );
+};
 
-  )
-}
-
-export default page
+export default page;

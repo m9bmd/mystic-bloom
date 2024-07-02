@@ -1,84 +1,115 @@
 "use client";
+import {
+  addQuantityDb,
+  addToCartDB,
+  deleteFromCartDB,
+  getUserCart,
+  subQuantityDb,
+} from "@/lib/actions/cartActions";
 import { TableTopFormData } from "@/lib/types";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import CartItem from "../Navbar/CartItem";
 
-export type CartItemType = TableTopFormData & {
+export type CartItemType = {
+  id: string;
   quantity: number;
+  price: String | number;
+  product: TableTopFormData;
 };
 
-type CartContextType = {
-  cart: CartItemType[];
-  addToCart: (product: CartItemType) => void;
-  removeFromCart: (id: string) => void;
-  addQuantity: (id: string) => void;
-  subQuantity: (id: string) => void;
+export type CartContextType = {
+  cart: CartItemType[] | [];
+  setCart: React.Dispatch<React.SetStateAction<CartItemType[] | []>>;
+  addToCart: (productId: string) => Promise<void>;
+  deleteFromCart: (productId: string) => Promise<void>;
+  addQuantity: ({ cartItemId }: { cartItemId: string }) => Promise<void>;
+  subQuantity: ({ cartItemId }: { cartItemId: string }) => Promise<void>;
 };
-
 const CartContext = createContext<CartContextType | null>(null);
 
-const CartContextProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<CartItemType[]>([]);
+export const CartContextProvider = ({ children }: { children: ReactNode }) => {
+  const [cart, setCart] = useState<CartItemType[] | []>([]);
 
-  const addToCart = (product: CartItemType) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find(
-        (cartItem) => cartItem.id === product.id,
-      );
-      if (existingItem) {
-        return prevCart.map((cartItem) =>
-          cartItem.id === product.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem,
-        );
-      } else {
-        return [...prevCart, { ...product, quantity: 1 }];
+  useEffect(() => {
+    const fetchUserCart = async () => {
+      try {
+        const fetchedCart = await getUserCart();
+        if (fetchedCart) {
+          console.log("inside useEffect cartContext", fetchedCart);
+          setCart(fetchedCart);
+        }
+      } catch (error) {
+        console.error("Error fetching user's cart:", error);
       }
-    });
-  };
+    };
 
-  const removeFromCart = (id: string) => {
-    const filteredCart = cart.filter((cartItem) => cartItem.id !== id);
-    setCart(filteredCart);
+    fetchUserCart();
+  }, []);
 
+  const addToCart = async (productId: string) => {
+    await addToCartDB({ productId });
+    const updatedCart = await getUserCart();
+    if (updatedCart) {
+      setCart(updatedCart);
+    }
   };
-  const addQuantity = (id: string) => {
+  const addQuantity = async ({ cartItemId }: { cartItemId: string }) => {
     const updatedCart = cart.map((cartItem) =>
-      cartItem.id === id
+      cartItem.id === cartItemId
         ? { ...cartItem, quantity: cartItem.quantity + 1 }
         : cartItem,
     );
     setCart(updatedCart);
+    await addQuantityDb(cartItemId);
   };
-
-  const subQuantity = (id: string) => {
-    const updatedCart = [];
-
-    for (const cartItem of cart) {
-      if (cartItem.id === id) {
-        if (cartItem.quantity > 1) {
-          updatedCart.push({ ...cartItem, quantity: cartItem.quantity - 1 });
+  const subQuantity = async ({ cartItemId }: { cartItemId: string }) => {
+    const updatedCart: CartItemType[] = [];
+    for (let cartItem of cart) {
+      if (cartItem.id === cartItemId) {
+        let updatedQuantity = cartItem.quantity - 1;
+        if (updatedQuantity < 1) {
+          console.log("Quantity cannot be less than 1 ", updatedQuantity);
+          await subQuantityDb({ cartItemId: cartItemId, quantity: updatedQuantity});
+        } else {
+          await subQuantityDb({ cartItemId });
+          updatedCart.push({ ...cartItem, quantity: updatedQuantity });
         }
       } else {
         updatedCart.push(cartItem);
       }
     }
-
     setCart(updatedCart);
   };
 
+  const deleteFromCart = async (productId: string) => {
+    const prevCart = cart;
+    try {
+      const updatedCart = cart.filter((cartItem) => cartItem.id !== productId);
+      setCart(updatedCart);
+      await deleteFromCartDB(productId);
+    } catch (error) {
+      setCart(prevCart);
+    }
+  };
+  const contextValue = {
+    cart,
+    setCart,
+    addToCart,
+    deleteFromCart,
+    addQuantity,
+    subQuantity,
+  };
   return (
-    <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, addQuantity, subQuantity }}
-    >
-      {children}
-    </CartContext.Provider>
+    <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>
   );
 };
 
-export default CartContextProvider;
-
-// Create a custom hook to use the CartContext
 export const useCartContext = (): CartContextType => {
   const context = useContext(CartContext);
   if (context === null) {

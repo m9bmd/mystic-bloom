@@ -5,21 +5,23 @@ import { TableTopFormData } from "@/lib/types";
 import React from "react";
 import AddToCartButton from "../_components/AddToCartButton";
 
-import ProductCarousel from "../_components/ProductCarousel";
-
 
 const page = async ({ params }: { params: { id: string } }) => {
   const id = params.id;
   const product = (await fetchProduct(id)) as TableTopFormData;
   return (
-    <div className="space-y-4 max-w-[1224px] lg:mx-auto">
+    <div className="max-w-[1224px] space-y-4 lg:mx-auto">
       <GoBackButton />
       <div className="space-y-6">
         <ScrollArea className="w-full whitespace-nowrap rounded-md border border-slate-300">
           <div className="flex">
             {product.images.map((image) => (
               <figure key={image.name} className="shrink-0 p-4">
-                <img src={image.url} alt={image.name} className="h-[464px] rounded-lg" />
+                <img
+                  src={image.url}
+                  alt={image.name}
+                  className="h-[464px] rounded-lg"
+                />
               </figure>
             ))}
           </div>
@@ -39,10 +41,13 @@ const page = async ({ params }: { params: { id: string } }) => {
             </span>
           </p>
         </div>
-        <AddToCartButton product={product} />
+
+          <AddToCartButton product={product} />
+
+
         <div className="space-y-4">
           <p className="font-medium">product description</p>
-          <p className="text-sm text-pretty">{product.description}</p>
+          <p className="text-pretty text-sm">{product.description}</p>
         </div>
         {/* <div>
           <ProductCarousel id={product.id} />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -9,54 +9,55 @@ import {
 } from "../ui/sheet";
 import { FlowerIcon, ShoppingBagIcon } from "lucide-react";
 import { useCartContext } from "../cart/CartContextProvider";
-import { Button, buttonVariants } from "../ui/button";
 import CartItem from "./CartItem";
 import Link from "next/link";
+import { Button, buttonVariants } from "../ui/button";
 import { navigate } from "@/lib/navigate";
-import TotalCartAmout from "../cart/TotalCartAmout";
-
 const Cart = () => {
-  const { cart } = useCartContext();
   const [open, setOpen] = useState(false);
-  // console.log(cart);
-  async function onCheckoutSubmit() {
-    await navigate("/checkout");
-    setOpen(false);
-  }
+  const { cart } = useCartContext();
+  // console.log("from cart in navbar", cart);
+  const onClick = async () => {
+    await navigate("/cart");
+    setOpen((prev) => !prev);
+  };
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger>
-        <span className="relative">
+      <SheetTrigger className="relative">
+        <span className="">
           <ShoppingBagIcon className="h-6 w-6 text-background" />
-          {cart.length > 0 && (
-            <span className="absolute bottom-0 right-0 flex h-2 w-2 items-center justify-center rounded-full bg-background p-2 text-sm">
-              {cart.length}
+          {cart?.length !== 0 && (
+            <span className="absolute -bottom-2 -right-2 rounded-full bg-background px-2 text-sm">
+              {cart?.length}
             </span>
           )}
         </span>
       </SheetTrigger>
       <SheetContent className="w-[90%] pt-16">
-        {cart.length === 0 ? (
-          <SheetHeader className="flex h-full items-center justify-center pt-0">
-            <SheetTitle>Your cart is Empty</SheetTitle>
-            <SheetDescription className="flex flex-col items-center justify-center gap-2">
-              fill it with flowers
-              <FlowerIcon className="h-6 w-6 text-pink-400" />
-            </SheetDescription>
-          </SheetHeader>
+        {cart?.length === 0 ? (
+          <p className="flex h-full items-center justify-center gap-2 text-2xl font-medium">
+            your cart is empty
+            <span className="text-pink-500">
+              <FlowerIcon />
+            </span>
+          </p>
         ) : (
-          <div className="flex h-full w-full flex-col gap-4 rounded-md p-4">
-            <p className="flex items-baseline gap-2 text-lg font-medium">
-              Your cart{" "}
+          <div className="space-y-8">
+            <p className="flex justify-between text-lg font-medium">
+              your cart
+              <span className="flex items-center gap-2">
+                <FlowerIcon className="text-pink-500" /> {cart.length}
+              </span>
             </p>
-            {cart.map((cartItem) => (
-              <CartItem key={cartItem.id} cartItem={cartItem} />
-            ))}
-            <div>
-              <TotalCartAmout/>
-            </div>
-            <Button onClick={() => onCheckoutSubmit()} className="w-full">
-              Checkout
+            {
+              <div className="space-y-4">
+                {cart?.map((item) => (
+                  <CartItem key={item.id} cartItem={item} />
+                ))}
+              </div>
+            }
+            <Button className="w-full" size={"lg"} onClick={() => onClick()}>
+              Proceed to cart
             </Button>
           </div>
         )}
@@ -66,3 +67,65 @@ const Cart = () => {
 };
 
 export default Cart;
+
+// import React, { useEffect, useState } from "react";
+// import {
+//   Sheet,
+//   SheetContent,
+//   SheetDescription,
+//   SheetHeader,
+//   SheetTitle,
+//   SheetTrigger,
+// } from "../ui/sheet";
+// import { FlowerIcon, ShoppingBagIcon } from "lucide-react";
+// import { useCartContext } from "../cart/CartContextProvider";
+// import { getUserCart } from "@/lib/actions/cartActions";
+// import CartItem from "./CartItem";
+// const Cart = () => {
+//   const [open, setOpen] = useState(false);
+//   const { cart } = useCartContext();
+//   // console.log(cart)
+//   // console.log(cart?.CartItem.length)
+//   return (
+//     <Sheet open={open} onOpenChange={setOpen}>
+//       <SheetTrigger className="relative">
+//         <span className="">
+//           <ShoppingBagIcon className="h-6 w-6 text-background" />
+//           {cart?.CartItem.length !== 0 && (
+//             <span className="absolute -bottom-2 -right-2 rounded-full bg-background px-2 text-sm">
+//               {cart?.CartItem.length}
+//             </span>
+//           )}
+//         </span>
+//       </SheetTrigger>
+//       <SheetContent className="w-[90%] pt-16">
+//         {cart?.CartItem.length === 0 ? (
+//           <p className="flex h-full items-center justify-center gap-2 text-2xl font-medium">
+//             your cart is empty
+//             <span className="text-pink-500">
+//               <FlowerIcon />
+//             </span>
+//           </p>
+//         ) : (
+//           <div className="space-y-8">
+//             <p className="flex gap-2 text-lg font-medium">
+//               your cart
+//               <span className="text-pink-500">
+//                 <FlowerIcon />
+//               </span>
+//             </p>
+//             {
+//               <div className="space-y-4">
+//                 {cart?.CartItem.map((item) => (
+//                   <CartItem key={item.id} cartItem={item} />
+//                 ))}
+//               </div>
+//             }
+//           </div>
+//         )}
+//       </SheetContent>
+//     </Sheet>
+//   );
+// };
+
+// export default Cart;
