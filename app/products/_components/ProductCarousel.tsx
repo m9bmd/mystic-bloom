@@ -9,7 +9,7 @@ import React from "react";
 
 const ProductCarousel = async ({ id }: { id: string }) => {
   const products = await fetchAllProducts();
-  const filteredProducts = products.filter((product) => product.id !== id);
+  const filteredProducts = products?.filter((product) => product.id !== id);
   return (
     <div className="">
       <div className="flex items-center justify-between">
@@ -19,7 +19,7 @@ const ProductCarousel = async ({ id }: { id: string }) => {
 
       <ScrollArea className="w-full whitespace-nowrap rounded-md border border-slate-300 p-4 px-4">
         <div className="flex w-max space-x-4">
-          {filteredProducts.map((product) => (
+          {filteredProducts?.map((product) => (
             <Link
               href={`/products/${product.id}`}
               key={product.name}
