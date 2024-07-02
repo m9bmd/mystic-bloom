@@ -17,8 +17,8 @@ const CustomerReviews = () => {
           <CarouselContent>
             {reviews.map((review) => (
               <CarouselItem key={review.username} className="basis-1/2 ">
-                <div className="border border-slate-300  px-4 py-2 rounded-md flex flex-col gap-4">
-                  <h2 className="font-medium text-xl  h-48">{review.review}</h2>
+                <div className="border border-slate-300  px-4 py-2 rounded-md flex flex-col gap-4 h-72">
+                  <h2 className="font-medium text-md  flex-1 ">{review.review}</h2>
                   <RatingsStars ratings={review.ratings} />
                   <p className="font-medium">@{review.username}</p>
                 </div>
