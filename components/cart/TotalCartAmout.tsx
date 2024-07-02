@@ -22,7 +22,7 @@ const TotalCartAmount = () => {
     <div className="flex flex-col  gap-2">
       <div className="flex flex-col rounded-lg gap-2">
         {cart.map((cartItem) => (
-          <div className="flex gap-2 w-full">
+          <div key={cartItem.id} className="flex gap-2 w-full">
             <p> {cartItem.product.name}</p>
             <p>x</p>
             <p>{cartItem.quantity}</p>

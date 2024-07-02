@@ -22,8 +22,8 @@ const CartItems = () => {
       ) : (
         <div className="space-y-6">
           <div className="flex max-w-96 flex-col gap-4">
-            {cart.map((cartItem) => (
-              <CartItem key={cartItem.id} cartItem={cartItem} />
+            {cart.map((cartItem, index) => (
+              <CartItem key={index} cartItem={cartItem} />
             ))}
           </div>
           <div className="space-y-4">
