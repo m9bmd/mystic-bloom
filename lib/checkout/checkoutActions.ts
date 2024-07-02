@@ -7,13 +7,14 @@ import { paymentType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { navigate } from "../navigate";
+import { OrderType } from "@/app/admin/orders/_types/orderType";
 
 enum PaymentType {
   ONLINE = "ONLINE",
   COD = "COD",
 }
 
-export const fetchOrder = async (id: string) => {
+export const fetchOrder = async (id: string): Promise<OrderType | null> => {
   try {
     const order = await prisma.order.findUnique({
       where: { id: id },
@@ -26,10 +27,10 @@ export const fetchOrder = async (id: string) => {
         },
       },
     });
-    return order;
+    return order as OrderType | null;
   } catch (error) {
     console.error(error);
-    return [];
+    return null;
   }
 };
 export const fetchAllOrders = async () => {
@@ -105,7 +106,7 @@ export const generateOrder = async (
       });
 
       console.log("New order created:", newOrder);
-      revalidatePath("/")
+      revalidatePath("/");
     } else {
       throw new Error("please login ");
     }
